@@ -1,0 +1,2038 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Muối Của Rừng — Nguyễn Huy Thiệp | Triển Lãm Văn Học Số</title>
+
+  <!-- Google Fonts: Hỗ trợ đầy đủ dấu tiếng Việt -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600;1,700&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap"
+    rel="stylesheet"
+  />
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            forest: {
+              deep: '#0F1E19',
+              mid: '#162923',
+              light: '#1F3830',
+            },
+            amberwarm: '#E2B86B',
+            pearl: '#F8FAFC',
+          },
+          fontFamily: {
+            display: ['"Cormorant Garamond"', '"Playfair Display"', 'serif'],
+            sans: ['"Be Vietnam Pro"', 'sans-serif'],
+          },
+        },
+      },
+    };
+  </script>
+
+  <!-- GSAP CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    :root {
+      --bg-forest-deep: #0F1E19;
+      --bg-forest-mid: #162923;
+      --bg-card-glass: rgba(22, 41, 35, 0.78);
+      --border-glass: rgba(226, 184, 107, 0.24);
+      --border-pearl: rgba(248, 250, 252, 0.16);
+      --accent-amber: #E2B86B;
+      --accent-amber-soft: rgba(226, 184, 107, 0.14);
+      --accent-pearl: #F8FAFC;
+      --text-primary: #F8FAFC;
+      --text-secondary: #E2E8F0;
+      --text-muted: #CBD5E1;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background-color: var(--bg-forest-deep);
+      color: var(--text-primary);
+      font-family: 'Be Vietnam Pro', -apple-system, BlinkMacSystemFont, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      user-select: none;
+    }
+
+    [contenteditable="true"] {
+      user-select: text;
+      outline: none;
+    }
+
+    [contenteditable="true"]:focus {
+      box-shadow: 0 0 0 2px var(--accent-amber), 0 0 24px rgba(226, 184, 107, 0.35);
+      background: rgba(22, 41, 35, 0.96);
+    }
+
+    /* Glassmorphism & Literary Exhibition Surfaces */
+    .glass-panel {
+      background: linear-gradient(145deg, rgba(22, 41, 35, 0.86), rgba(15, 30, 25, 0.90));
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border: 1px solid var(--border-pearl);
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(248, 250, 252, 0.08);
+    }
+
+    .glass-panel-amber {
+      background: linear-gradient(145deg, rgba(28, 50, 42, 0.90), rgba(15, 30, 25, 0.92));
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border: 1px solid rgba(226, 184, 107, 0.42);
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.48), 0 0 40px rgba(226, 184, 107, 0.09);
+    }
+
+    /* Slide Viewport */
+    #deck-stage {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      background: radial-gradient(circle at 50% 35%, #162923 0%, #0F1E19 75%);
+    }
+
+    .slide {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      display: none;
+      opacity: 0;
+      overflow-y: auto;
+      overflow-x: hidden;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(226, 184, 107, 0.35) transparent;
+    }
+
+    .slide.is-active {
+      display: flex;
+      z-index: 10;
+    }
+
+    .slide-inner {
+      position: relative;
+      z-index: 20;
+      width: 100%;
+      max-width: 1440px;
+      margin: auto;
+      padding: clamp(1.5rem, 3.2vw, 3.25rem) clamp(1.5rem, 4.5vw, 4.5rem) 5.75rem;
+    }
+
+    /* Background Image + Ken Burns + Mist Vignette */
+    .slide-bg-wrap {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 1;
+    }
+
+    .slide-bg-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.28;
+      filter: saturate(0.75) contrast(1.05);
+      transform: scale(1.1);
+      will-change: transform;
+    }
+
+    .slide-mist-overlay {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse at 70% 25%, rgba(226, 184, 107, 0.10) 0%, transparent 55%),
+        radial-gradient(circle at 20% 80%, rgba(22, 41, 35, 0.72) 0%, transparent 60%),
+        linear-gradient(180deg, rgba(15, 30, 25, 0.78) 0%, rgba(15, 30, 25, 0.58) 45%, rgba(15, 30, 25, 0.94) 100%);
+    }
+
+    /* Ambient Canvas */
+    #ambient-canvas {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 15;
+      transition: opacity 0.45s ease;
+    }
+
+    /* Typography Helpers */
+    .font-literary {
+      font-family: 'Cormorant Garamond', 'Playfair Display', serif;
+    }
+
+    .section-eyebrow {
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--accent-amber);
+      font-size: 0.78rem;
+      font-weight: 600;
+    }
+
+    .slide-heading {
+      font-family: 'Cormorant Garamond', 'Playfair Display', serif;
+      font-size: clamp(2rem, 3.6vw, 3.4rem);
+      line-height: 1.12;
+      font-weight: 700;
+      color: var(--text-primary);
+      letter-spacing: -0.01em;
+    }
+
+    /* Interactive Cards & Spotlight */
+    .reveal-item {
+      will-change: transform, opacity;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease, opacity 0.35s ease;
+    }
+
+    .reveal-item.is-hidden-step {
+      opacity: 0.12 !important;
+      filter: blur(2px);
+      transform: translateY(10px) scale(0.985);
+    }
+
+    .reveal-item.is-spotlight {
+      border-color: rgba(226, 184, 107, 0.8) !important;
+      box-shadow: 0 0 0 1px rgba(226, 184, 107, 0.45), 0 24px 55px rgba(0, 0, 0, 0.55), 0 0 36px rgba(226, 184, 107, 0.2) !important;
+    }
+
+    .meaning-card {
+      cursor: pointer;
+      transition: all 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .meaning-card:hover,
+    .meaning-card.is-selected {
+      transform: translateY(-6px);
+      border-color: rgba(226, 184, 107, 0.75);
+      box-shadow: 0 26px 56px rgba(0, 0, 0, 0.52), 0 0 34px rgba(226, 184, 107, 0.22);
+    }
+
+    /* Smart Bottom Dock */
+    #smart-dock {
+      position: fixed;
+      bottom: 1.15rem;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 60;
+      transition: opacity 0.45s ease, transform 0.45s ease;
+    }
+
+    #smart-dock.is-idle {
+      opacity: 0.24;
+    }
+
+    #smart-dock:hover,
+    #smart-dock.is-pinned {
+      opacity: 1 !important;
+    }
+
+    .dock-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+      padding: 0.48rem 0.72rem;
+      border-radius: 0.75rem;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      background: rgba(248, 250, 252, 0.05);
+      border: 1px solid rgba(248, 250, 252, 0.1);
+      transition: all 0.22s ease;
+      cursor: pointer;
+    }
+
+    .dock-btn:hover {
+      color: var(--text-primary);
+      background: rgba(226, 184, 107, 0.16);
+      border-color: rgba(226, 184, 107, 0.45);
+    }
+
+    .dock-btn.is-active {
+      color: #0F1E19;
+      background: var(--accent-amber);
+      border-color: var(--accent-amber);
+      font-weight: 600;
+    }
+
+    /* Virtual Red Laser Pointer */
+    body.laser-mode,
+    body.laser-mode * {
+      cursor: none !important;
+    }
+
+    #laser-dot {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 16px;
+      height: 16px;
+      border-radius: 9999px;
+      background: radial-gradient(circle, #ffffff 0%, #ff3b3b 38%, #dc2626 70%, rgba(220, 38, 38, 0) 100%);
+      box-shadow:
+        0 0 12px 4px rgba(255, 45, 45, 0.92),
+        0 0 28px 10px rgba(239, 68, 68, 0.55),
+        0 0 54px 18px rgba(239, 68, 68, 0.28);
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-50%, -50%);
+      display: none;
+    }
+
+    .laser-trail {
+      position: fixed;
+      width: 10px;
+      height: 10px;
+      border-radius: 9999px;
+      background: rgba(255, 59, 59, 0.55);
+      box-shadow: 0 0 12px rgba(255, 59, 59, 0.65);
+      pointer-events: none;
+      z-index: 9998;
+      transform: translate(-50%, -50%);
+      transition: opacity 0.28s ease, transform 0.28s ease;
+    }
+
+    /* Overview Grid Modal */
+    #overview-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 80;
+      background: rgba(8, 17, 14, 0.92);
+      backdrop-filter: blur(22px);
+      -webkit-backdrop-filter: blur(22px);
+      display: none;
+      opacity: 0;
+      overflow-y: auto;
+    }
+
+    #overview-modal.is-open {
+      display: flex;
+    }
+
+    /* Story Timeline Step Active Pill */
+    .story-node {
+      transition: all 0.28s ease;
+      cursor: pointer;
+    }
+
+    .story-node.is-active {
+      background: rgba(226, 184, 107, 0.18);
+      border-color: var(--accent-amber);
+      box-shadow: 0 0 24px rgba(226, 184, 107, 0.24);
+    }
+
+    /* Top Minimal Header Badge */
+    #top-brand-bar {
+      position: fixed;
+      top: 1rem;
+      left: 1.5rem;
+      right: 1.5rem;
+      z-index: 50;
+      pointer-events: none;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    #top-brand-bar > * {
+      pointer-events: auto;
+    }
+
+    @media (max-width: 768px) {
+      #smart-dock {
+        width: calc(100vw - 1.5rem);
+        max-width: 640px;
+      }
+      .dock-label-hide-sm {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Ambient Spring Drizzle & Hoa Tử Huyền Petals Canvas -->
+  <canvas id="ambient-canvas" aria-hidden="true"></canvas>
+
+  <!-- Virtual Laser Pointer Elements -->
+  <div id="laser-dot" aria-hidden="true"></div>
+
+  <!-- Minimal Top Exhibition Header -->
+  <header id="top-brand-bar">
+    <div class="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full glass-panel text-xs text-slate-200 tracking-wide">
+      <span class="w-2 h-2 rounded-full bg-amberwarm animate-pulse"></span>
+      <span class="font-medium text-pearl">MUỐI CỦA RỪNG</span>
+      <span class="text-slate-400">•</span>
+      <span class="text-slate-300 hidden sm:inline">Nguyễn Huy Thiệp</span>
+    </div>
+
+    <div class="inline-flex items-center gap-2">
+      <button
+        id="btn-step-mode"
+        type="button"
+        onclick="toggleProgressiveMode()"
+        class="px-3 py-1.5 rounded-full glass-panel text-xs font-medium text-slate-200 hover:border-amberwarm/60 transition flex items-center gap-1.5 cursor-pointer"
+        title="Bật/tắt chế độ trình chiếu từng ý (Phím N để mở ý tiếp theo)"
+      >
+        <i data-lucide="layers" class="w-3.5 h-3.5 text-amberwarm"></i>
+        <span id="step-mode-label">Hiện toàn bộ ý</span>
+      </button>
+      <button
+        type="button"
+        onclick="toggleOverview()"
+        class="px-3 py-1.5 rounded-full glass-panel text-xs font-medium text-slate-200 hover:border-amberwarm/60 transition flex items-center gap-1.5 cursor-pointer"
+        title="Mở mục lục nhanh (Phím M)"
+      >
+        <i data-lucide="layout-grid" class="w-3.5 h-3.5 text-amberwarm"></i>
+        <span class="hidden sm:inline">Mục lục (M)</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Presentation Stage -->
+  <main id="deck-stage" role="region" aria-label="Bài thuyết trình Muối của rừng">
+
+    <!-- =========================================================
+         SLIDE 01: BÌA MỞ ĐẦU
+    ========================================================== -->
+    <section class="slide is-active" data-slide="0" data-title="Bìa mở đầu">
+      <div class="slide-bg-wrap">
+        <img
+          class="slide-bg-img"
+          src="https://upload.wikimedia.org/wikipedia/commons/2/2e/Misty_Mountain_Forest_%286037443287%29.jpg"
+          data-backup="https://images.unsplash.com/photo-1500354960738-4c480ed785bc?auto=format&fit=crop&w=1920&q=80"
+          alt="Cảnh rừng núi Tây Bắc Việt Nam mùa xuân chìm trong sương mù sớm mai"
+          onerror="window.resolveImageFallback(this, 'forest-mist')"
+        />
+        <div class="slide-mist-overlay"></div>
+      </div>
+
+      <div class="slide-inner flex flex-col items-center justify-center text-center min-h-screen py-16">
+        <div class="reveal-item inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full glass-panel-amber text-xs sm:text-sm font-medium text-amberwarm tracking-[0.2em] uppercase mb-6">
+          <i data-lucide="sparkles" class="w-4 h-4"></i>
+          <span>Triển Lãm Văn Học Số • Văn Học Đổi Mới 1986</span>
+        </div>
+
+        <h1 class="reveal-item font-literary font-bold text-pearl tracking-tight leading-none mb-5 drop-shadow-[0_10px_35px_rgba(0,0,0,0.65)]" style="font-size: clamp(3.3rem, 8.2vw, 6.8rem);">
+          MUỐI CỦA RỪNG
+        </h1>
+
+        <p class="reveal-item text-lg sm:text-2xl text-slate-100 font-light tracking-wide max-w-2xl mb-8">
+          Tác giả: <span class="font-semibold text-amberwarm">Nguyễn Huy Thiệp</span>
+          <span class="mx-3 text-slate-400">|</span>
+          <span>Ngữ văn 12</span>
+        </p>
+
+        <!-- Huy hiệu nhóm thực hiện dễ chỉnh sửa -->
+        <div class="reveal-item mb-10">
+          <div class="inline-flex items-center gap-3 px-5 py-2.5 rounded-2xl glass-panel border border-amberwarm/40 shadow-lg group">
+            <i data-lucide="users" class="w-4 h-4 text-amberwarm shrink-0"></i>
+            <span class="text-xs uppercase tracking-widest text-slate-300">Thực hiện:</span>
+            <span
+              id="group-badge"
+              contenteditable="true"
+              spellcheck="false"
+              title="Nhấp vào đây để chỉnh sửa tên nhóm và lớp"
+              class="text-sm sm:text-base font-semibold text-pearl px-2 py-0.5 rounded-lg bg-white/5 hover:bg-white/10 transition cursor-text"
+            >Nhóm 1 - Lớp 12A1</span>
+            <i data-lucide="pencil" class="w-3.5 h-3.5 text-amberwarm/70 group-hover:text-amberwarm transition shrink-0"></i>
+          </div>
+          <p class="text-[11px] text-slate-300/80 mt-2">
+            Mẹo: Nhấp trực tiếp vào tên nhóm để sửa trước khi chiếu • Nhấn <kbd class="px-1.5 py-0.5 rounded bg-white/10 text-amberwarm">→</kbd> hoặc <kbd class="px-1.5 py-0.5 rounded bg-white/10 text-amberwarm">Space</kbd> để chuyển trang
+          </p>
+        </div>
+
+        <div class="reveal-item flex flex-wrap items-center justify-center gap-4">
+          <button
+            type="button"
+            onclick="goToSlide(1)"
+            class="group inline-flex items-center gap-3 px-8 py-4 rounded-full bg-amberwarm text-[#0F1E19] font-semibold text-base sm:text-lg shadow-[0_14px_38px_rgba(226,184,107,0.38)] hover:bg-[#ecc983] hover:scale-[1.03] active:scale-[0.98] transition cursor-pointer"
+          >
+            <span>Bắt đầu hành trình</span>
+            <span class="inline-block transition-transform group-hover:translate-x-1">→</span>
+          </button>
+
+          <button
+            type="button"
+            onclick="toggleOverview()"
+            class="inline-flex items-center gap-2 px-6 py-4 rounded-full glass-panel text-pearl font-medium text-sm sm:text-base hover:border-amberwarm/60 transition cursor-pointer"
+          >
+            <i data-lucide="compass" class="w-4 h-4 text-amberwarm"></i>
+            <span>Xem 8 mục thuyết trình</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================
+         SLIDE 02: 1. TÁC GIẢ NGUYỄN HUY THIỆP (1950–2021)
+    ========================================================== -->
+    <section class="slide" data-slide="1" data-title="1. Tác giả Nguyễn Huy Thiệp">
+      <div class="slide-bg-wrap">
+        <img
+          class="slide-bg-img"
+          src="https://upload.wikimedia.org/wikipedia/commons/2/2e/Misty_Mountain_Forest_%286037443287%29.jpg"
+          data-backup="https://images.unsplash.com/photo-1500354960738-4c480ed785bc?auto=format&fit=crop&w=1920&q=80"
+          alt="Không gian rừng núi sương mù Tây Bắc"
+          onerror="window.resolveImageFallback(this, 'forest-mist')"
+        />
+        <div class="slide-mist-overlay"></div>
+      </div>
+
+      <div class="slide-inner flex flex-col justify-center min-h-screen">
+        <div class="mb-6">
+          <p class="section-eyebrow mb-2">Phần 01 • Chân Dung Văn Học</p>
+          <h2 class="slide-heading">1. Tác giả Nguyễn Huy Thiệp <span class="text-amberwarm font-normal">(1950–2021)</span></h2>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-stretch">
+          <!-- Cột trái: Khung chân dung nghệ thuật -->
+          <div class="lg:col-span-4 reveal-item flex">
+            <div class="glass-panel-amber rounded-3xl p-4 sm:p-5 flex flex-col justify-between w-full">
+              <div class="relative overflow-hidden rounded-2xl bg-[#0b1713] aspect-[4/5] border border-amberwarm/30">
+                <img
+                  src="https://upload.wikimedia.org/wikipedia/vi/1/15/Nh%C3%A0_v%C4%83n_Nguy%E1%BB%85n_Huy_Thi%E1%BB%87p.jpg"
+                  data-backup="https://baomoi-phunudoisong.mediacdn.vn/zoom/705_466/2021/02/15/nguyenhuythiep-1613386616422329045763.jpg"
+                  alt="Chân dung nhà văn Nguyễn Huy Thiệp đang vẽ trên đĩa gốm"
+                  class="w-full h-full object-cover object-top transition duration-700 hover:scale-105"
+                  onerror="window.resolveImageFallback(this, 'author')"
+                />
+                <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#0F1E19] via-[#0F1E19]/70 to-transparent p-4 pt-12">
+                  <div class="text-xs uppercase tracking-widest text-amberwarm font-semibold">Nhà văn Việt Nam hiện đại</div>
+                  <div class="font-literary text-2xl font-bold text-pearl mt-0.5">Nguyễn Huy Thiệp</div>
+                </div>
+              </div>
+
+              <div class="mt-4 pt-3 border-t border-white/10 flex items-center justify-between text-xs text-slate-300">
+                <span>Ảnh tư liệu: Nguyễn Đình Toán</span>
+                <span class="px-2.5 py-1 rounded-full bg-amberwarm/15 text-amberwarm font-semibold">1950 – 2021</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Cột phải: 3 thẻ thông tin -->
+          <div class="lg:col-span-8 flex flex-col gap-4 justify-between">
+            <!-- Thẻ 1: Quê quán và cuộc đời -->
+            <article class="reveal-item glass-panel rounded-2xl p-5 sm:p-6 hover:border-amberwarm/50 cursor-pointer" onclick="spotlightItem(this)">
+              <div class="flex items-start gap-4">
+                <div class="w-11 h-11 rounded-xl bg-amberwarm/15 border border-amberwarm/40 flex items-center justify-center shrink-0 text-amberwarm">
+                  <i data-lucide="map-pin" class="w-5 h-5"></i>
+                </div>
+                <div>
+                  <h3 class="text-lg sm:text-xl font-semibold text-amberwarm mb-1.5">Quê quán và cuộc đời</h3>
+                  <p class="text-sm sm:text-base text-slate-100 leading-relaxed">
+                    Sinh tại Thái Nguyên, quê gốc ở Thanh Trì, Hà Nội. Ông tốt nghiệp khoa Sử, Đại học Sư phạm Hà Nội năm 1972.
+                  </p>
+                </div>
+              </div>
+            </article>
+
+            <!-- Thẻ 2: Sự nghiệp văn học -->
+            <article class="reveal-item glass-panel rounded-2xl p-5 sm:p-6 hover:border-amberwarm/50 cursor-pointer" onclick="spotlightItem(this)">
+              <div class="flex items-start gap-4">
+                <div class="w-11 h-11 rounded-xl bg-amberwarm/15 border border-amberwarm/40 flex items-center justify-center shrink-0 text-amberwarm">
+                  <i data-lucide="feather" class="w-5 h-5"></i>
+                </div>
+                <div class="w-full">
+                  <h3 class="text-lg sm:text-xl font-semibold text-amberwarm mb-2">Sự nghiệp văn học</h3>
+                  <ul class="space-y-2.5 text-sm sm:text-base text-slate-100 leading-relaxed">
+                    <li class="flex items-start gap-2.5">
+                      <span class="text-amberwarm font-bold mt-0.5">+</span>
+                      <span>Xuất hiện trên văn đàn Việt Nam từ năm 1986 và nhanh chóng tạo nên một hiện tượng lớn, mang đến làn gió mới sắc lạnh, tỉnh táo và triết lý cho văn học đổi mới.</span>
+                    </li>
+                    <li class="flex items-start gap-2.5">
+                      <span class="text-amberwarm font-bold mt-0.5">+</span>
+                      <span>Sáng tác đa dạng thể loại gồm hơn 50 truyện ngắn, khoảng 10 vở kịch và 4 tiểu thuyết.</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </article>
+
+            <!-- Thẻ 3: Các tác phẩm tiêu biểu -->
+            <article class="reveal-item glass-panel rounded-2xl p-5 sm:p-6 hover:border-amberwarm/50 cursor-pointer" onclick="spotlightItem(this)">
+              <div class="flex items-start gap-4">
+                <div class="w-11 h-11 rounded-xl bg-amberwarm/15 border border-amberwarm/40 flex items-center justify-center shrink-0 text-amberwarm">
+                  <i data-lucide="book-open" class="w-5 h-5"></i>
+                </div>
+                <div>
+                  <h3 class="text-lg sm:text-xl font-semibold text-amberwarm mb-1.5">Các tác phẩm tiêu biểu</h3>
+                  <p class="text-sm sm:text-base text-slate-100 leading-relaxed">
+                    <span class="italic text-pearl font-medium">Tướng về hưu</span> (tập truyện ngắn, 1987),
+                    <span class="italic text-pearl font-medium">Những ngọn gió Hua Tát</span> (tập truyện ngắn, 1989),
+                    <span class="italic text-pearl font-medium">Như những ngọn gió</span> (tuyển tập truyện ngắn và kịch, 1995),
+                    <span class="italic text-pearl font-medium">Tuổi hai mươi yêu dấu</span> (tiểu thuyết, 2003),
+                    <span class="italic text-pearl font-medium">Giăng lưới bắt chim</span> (tập tiểu luận, 2006)...
+                  </p>
+                </div>
+              </div>
+            </article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================
+         SLIDE 03: 2. TÁC PHẨM (THỂ LOẠI & XUẤT XỨ)
+    ========================================================== -->
+    <section class="slide" data-slide="2" data-title="2. Tác phẩm (Thể loại & Xuất xứ)">
+      <div class="slide-bg-wrap">
+        <img
+          class="slide-bg-img"
+          src="https://images.unsplash.com/photo-1500354960738-4c480ed785bc?auto=format&fit=crop&w=1920&q=80"
+          data-backup="https://upload.wikimedia.org/wikipedia/commons/2/2e/Misty_Mountain_Forest_%286037443287%29.jpg"
+          alt="Thiên nhiên rừng xanh mùa xuân"
+          onerror="window.resolveImageFallback(this, 'forest-mist')"
+        />
+        <div class="slide-mist-overlay"></div>
+      </div>
+
+      <div class="slide-inner flex flex-col justify-center min-h-screen">
+        <div class="mb-8">
+          <p class="section-eyebrow mb-2">Phần 02 • Thông Tin Văn Bản</p>
+          <h2 class="slide-heading">2. Tác phẩm <span class="text-amberwarm font-normal">(Thể loại &amp; Xuất xứ)</span></h2>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 items-stretch">
+          <!-- Cột 1: Thể loại & Phương thức biểu đạt -->
+          <div class="reveal-item glass-panel-amber rounded-3xl p-6 sm:p-8 flex flex-col justify-between cursor-pointer" onclick="spotlightItem(this)">
+            <div>
+              <div class="flex items-center justify-between mb-6">
+                <span class="px-3.5 py-1 rounded-full bg-amberwarm/15 border border-amberwarm/40 text-amberwarm text-xs font-semibold uppercase tracking-widest">
+                  Cột 01 • Thể loại &amp; Phương thức biểu đạt
+                </span>
+                <div class="w-12 h-12 rounded-2xl bg-amberwarm/15 flex items-center justify-center text-amberwarm">
+                  <i data-lucide="scroll-text" class="w-6 h-6"></i>
+                </div>
+              </div>
+
+              <h3 class="font-literary text-3xl sm:text-4xl font-bold text-pearl mb-4">
+                Thể loại: <span class="text-amberwarm">Truyện ngắn</span>
+              </h3>
+
+              <p class="text-base sm:text-lg text-slate-100 leading-relaxed mb-6">
+                Truyện ngắn (với phương thức biểu đạt chính là <span class="text-amberwarm font-semibold">tự sự kết hợp trữ tình</span>).
+              </p>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4 pt-6 border-t border-white/10">
+              <div class="rounded-2xl bg-white/5 border border-white/10 p-4">
+                <div class="text-xs uppercase tracking-wider text-amberwarm font-semibold mb-1">Tự sự</div>
+                <div class="text-sm text-slate-200 leading-snug">Kể lại mạch biến cố chuyến đi săn và cuộc chuyển hóa tâm lý của ông Diểu.</div>
+              </div>
+              <div class="rounded-2xl bg-white/5 border border-white/10 p-4">
+                <div class="text-xs uppercase tracking-wider text-amberwarm font-semibold mb-1">Trữ tình</div>
+                <div class="text-sm text-slate-200 leading-snug">Chất thơ bảng lảng của mùa xuân, mưa bụi và vẻ đẹp thiêng liêng hoa tử huyền.</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Cột 2: Xuất xứ (3 mốc thời gian trực quan 1986 -> 1987 -> 2021) -->
+          <div class="reveal-item glass-panel rounded-3xl p-6 sm:p-8 flex flex-col justify-between cursor-pointer" onclick="spotlightItem(this)">
+            <div class="flex items-center justify-between mb-6">
+              <span class="px-3.5 py-1 rounded-full bg-white/10 border border-white/20 text-pearl text-xs font-semibold uppercase tracking-widest">
+                Cột 02 • Xuất xứ (Dòng thời gian)
+              </span>
+              <div class="w-12 h-12 rounded-2xl bg-white/10 flex items-center justify-center text-amberwarm">
+                <i data-lucide="history" class="w-6 h-6"></i>
+              </div>
+            </div>
+
+            <div class="relative pl-7 space-y-6 before:content-[''] before:absolute before:left-[11px] before:top-3 before:bottom-3 before:w-[2px] before:bg-gradient-to-b before:from-amberwarm before:via-amberwarm/60 before:to-pearl/40">
+              <!-- Mốc 1986 -->
+              <div class="relative group">
+                <span class="absolute -left-[25px] top-1.5 w-4 h-4 rounded-full bg-amberwarm ring-4 ring-[#162923] shadow-[0_0_16px_rgba(226,184,107,0.7)]"></span>
+                <div class="rounded-2xl bg-white/5 border border-white/10 p-4 group-hover:border-amberwarm/50 transition">
+                  <div class="inline-block text-xs font-bold tracking-widest text-[#0F1E19] bg-amberwarm px-2.5 py-0.5 rounded-md mb-2">1986</div>
+                  <p class="text-sm sm:text-base text-slate-100 leading-relaxed">
+                    Tác phẩm được sáng tác năm 1986.
+                  </p>
+                </div>
+              </div>
+
+              <!-- Mốc 1987 -->
+              <div class="relative group">
+                <span class="absolute -left-[25px] top-1.5 w-4 h-4 rounded-full bg-amberwarm/85 ring-4 ring-[#162923]"></span>
+                <div class="rounded-2xl bg-white/5 border border-white/10 p-4 group-hover:border-amberwarm/50 transition">
+                  <div class="inline-block text-xs font-bold tracking-widest text-amberwarm bg-amberwarm/15 border border-amberwarm/40 px-2.5 py-0.5 rounded-md mb-2">1987</div>
+                  <p class="text-sm sm:text-base text-slate-100 leading-relaxed">
+                    In lần đầu trên báo Văn nghệ năm 1987.
+                  </p>
+                </div>
+              </div>
+
+              <!-- Mốc 2021 -->
+              <div class="relative group">
+                <span class="absolute -left-[25px] top-1.5 w-4 h-4 rounded-full bg-pearl ring-4 ring-[#162923]"></span>
+                <div class="rounded-2xl bg-white/5 border border-white/10 p-4 group-hover:border-amberwarm/50 transition">
+                  <div class="inline-block text-xs font-bold tracking-widest text-pearl bg-white/15 border border-white/30 px-2.5 py-0.5 rounded-md mb-2">2021</div>
+                  <p class="text-sm sm:text-base text-slate-100 leading-relaxed">
+                    Văn bản trong SGK được trích từ tập <span class="italic text-pearl font-medium">Truyện ngắn Nguyễn Huy Thiệp</span>, NXB Văn học, Hà Nội, 2021.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================
+         SLIDE 04: 3. Ý NGHĨA NHAN ĐỀ & THÔNG ĐIỆP
+    ========================================================== -->
+    <section class="slide" data-slide="3" data-title="3. Ý nghĩa nhan đề & Thông điệp">
+      <div class="slide-bg-wrap">
+        <img
+          class="slide-bg-img"
+          src="https://upload.wikimedia.org/wikipedia/commons/4/4d/Beautiful_tiny_white_wild_flower.jpg"
+          data-backup="https://images.unsplash.com/photo-1593841251751-1d61d8ed59e5?auto=format&fit=crop&w=1920&q=80"
+          alt="Loài hoa trắng nhỏ tinh khôi trên nền rừng xanh"
+          onerror="window.resolveImageFallback(this, 'flower-tu-huyen')"
+        />
+        <div class="slide-mist-overlay"></div>
+      </div>
+
+      <div class="slide-inner flex flex-col justify-center min-h-screen">
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-7">
+          <div>
+            <p class="section-eyebrow mb-2">Phần 03 • Biểu Tượng Nghệ Thuật</p>
+            <h2 class="slide-heading">3. Ý nghĩa nhan đề <span class="text-amberwarm font-normal">&amp; Thông điệp</span></h2>
+          </div>
+
+          <!-- Khung ảnh minh họa Hoa tử huyền -->
+          <div class="reveal-item inline-flex items-center gap-3.5 px-4 py-2.5 rounded-2xl glass-panel border border-white/15">
+            <img
+              src="https://upload.wikimedia.org/wikipedia/commons/4/4d/Beautiful_tiny_white_wild_flower.jpg"
+              data-backup="https://images.unsplash.com/photo-1593841251751-1d61d8ed59e5?auto=format&fit=crop&w=800&q=80"
+              alt="Minh họa loài hoa tử huyền trắng tinh khôi trên rêu đá"
+              class="w-14 h-14 rounded-xl object-cover border border-amberwarm/40 shrink-0"
+              onerror="window.resolveImageFallback(this, 'flower-tu-huyen')"
+            />
+            <div class="text-left">
+              <div class="text-xs uppercase tracking-widest text-amberwarm font-semibold">Biểu tượng trung tâm</div>
+              <div class="font-literary text-lg font-bold text-pearl">Hoa tử huyền — "Muối của rừng"</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3 thẻ tương tác phát sáng khi di chuột / chọn -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-5 lg:gap-6 items-stretch">
+          <!-- Thẻ 1: Nghĩa tả thực -->
+          <article
+            class="reveal-item meaning-card glass-panel rounded-3xl p-6 sm:p-7 flex flex-col justify-between"
+            onclick="selectMeaningCard(this)"
+          >
+            <div>
+              <div class="flex items-center justify-between mb-5">
+                <span class="text-xs font-bold tracking-widest uppercase text-slate-300 bg-white/10 px-3 py-1 rounded-full">Tầng nghĩa 01</span>
+                <div class="w-11 h-11 rounded-2xl bg-white/10 flex items-center justify-center text-pearl">
+                  <i data-lucide="flower-2" class="w-5 h-5"></i>
+                </div>
+              </div>
+              <h3 class="font-literary text-2xl sm:text-3xl font-bold text-pearl mb-3">Nghĩa tả thực</h3>
+              <p class="text-base text-slate-100 leading-relaxed">
+                Chỉ loài hoa tử huyền quý hiếm, khoảng 30 năm mới nở một lần, báo hiệu đất nước thanh bình, mùa màng phong túc.
+              </p>
+            </div>
+            <div class="mt-6 pt-4 border-t border-white/10 text-xs text-slate-300 flex items-center gap-2">
+              <i data-lucide="sparkles" class="w-3.5 h-3.5 text-amberwarm"></i>
+              <span>Kết tinh tinh túy của đất trời mỗi 30 năm</span>
+            </div>
+          </article>
+
+          <!-- Thẻ 2: Nghĩa biểu tượng -->
+          <article
+            class="reveal-item meaning-card glass-panel rounded-3xl p-6 sm:p-7 flex flex-col justify-between"
+            onclick="selectMeaningCard(this)"
+          >
+            <div>
+              <div class="flex items-center justify-between mb-5">
+                <span class="text-xs font-bold tracking-widest uppercase text-amberwarm bg-amberwarm/15 px-3 py-1 rounded-full">Tầng nghĩa 02</span>
+                <div class="w-11 h-11 rounded-2xl bg-amberwarm/15 flex items-center justify-center text-amberwarm">
+                  <i data-lucide="sun" class="w-5 h-5"></i>
+                </div>
+              </div>
+              <h3 class="font-literary text-2xl sm:text-3xl font-bold text-amberwarm mb-3">Nghĩa biểu tượng</h3>
+              <p class="text-base text-slate-100 leading-relaxed">
+                Tượng trưng cho vẻ đẹp quý giá của thiên nhiên và sự thức tỉnh lòng nhân ái trong tâm hồn con người.
+              </p>
+            </div>
+            <div class="mt-6 pt-4 border-t border-white/10 text-xs text-slate-300 flex items-center gap-2">
+              <i data-lucide="heart-handshake" class="w-3.5 h-3.5 text-amberwarm"></i>
+              <span>Thiên nhiên đáp lại tấm lòng thiện lương</span>
+            </div>
+          </article>
+
+          <!-- Thẻ 3: Thông điệp cốt lõi (Nổi bật trung tâm nhân văn) -->
+          <article
+            class="reveal-item meaning-card glass-panel-amber is-selected rounded-3xl p-6 sm:p-7 flex flex-col justify-between relative overflow-hidden"
+            onclick="selectMeaningCard(this)"
+          >
+            <div class="absolute -right-10 -top-10 w-36 h-36 rounded-full bg-amberwarm/15 blur-2xl pointer-events-none"></div>
+            <div class="relative z-10">
+              <div class="flex items-center justify-between mb-5">
+                <span class="text-xs font-bold tracking-widest uppercase text-[#0F1E19] bg-amberwarm px-3 py-1 rounded-full">Giá trị nhân văn cốt lõi</span>
+                <div class="w-11 h-11 rounded-2xl bg-amberwarm text-[#0F1E19] flex items-center justify-center shadow-lg">
+                  <i data-lucide="gem" class="w-5 h-5"></i>
+                </div>
+              </div>
+              <h3 class="font-literary text-2xl sm:text-3xl font-bold text-pearl mb-3">Thông điệp</h3>
+              <p class="text-base sm:text-lg text-pearl font-medium leading-relaxed">
+                Ca ngợi tình yêu thiên nhiên, lòng nhân hậu và sự gắn bó hài hòa giữa con người với muôn loài.
+              </p>
+            </div>
+            <div class="relative z-10 mt-6 pt-4 border-t border-amberwarm/30 text-xs text-amberwarm font-medium flex items-center gap-2">
+              <i data-lucide="leaf" class="w-3.5 h-3.5"></i>
+              <span>Thông điệp xuyên suốt toàn bộ tác phẩm</span>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================
+         SLIDE 05: 4. TÓM TẮT CÁC SỰ KIỆN CHÍNH (6 MẮT XÍCH)
+    ========================================================== -->
+    <section class="slide" data-slide="4" data-title="4. Tóm tắt các sự kiện chính">
+      <div class="slide-bg-wrap">
+        <img
+          id="story-slide-bg"
+          class="slide-bg-img"
+          src="https://upload.wikimedia.org/wikipedia/commons/a/a6/Macaca_fascicularis_in_Monkey_Forest_Ubud.jpg"
+          data-backup="https://images.unsplash.com/photo-1632764261011-24763c3aa384?auto=format&fit=crop&w=1920&q=80"
+          alt="Rừng tự nhiên và gia đình loài khỉ"
+          onerror="window.resolveImageFallback(this, 'event-2')"
+        />
+        <div class="slide-mist-overlay"></div>
+      </div>
+
+      <div class="slide-inner flex flex-col justify-center min-h-screen">
+        <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-5">
+          <div>
+            <p class="section-eyebrow mb-1.5">Phần 04 • Sơ Đồ Hành Trình Tương Tác</p>
+            <h2 class="slide-heading">4. Tóm tắt các sự kiện chính <span class="text-amberwarm font-normal text-2xl sm:text-3xl">(6 mắt xích)</span></h2>
+          </div>
+
+          <div class="flex items-center gap-2.5">
+            <button
+              id="btn-toggle-all-events"
+              type="button"
+              onclick="toggleAllEventsView()"
+              class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl glass-panel-amber text-xs sm:text-sm font-semibold text-amberwarm hover:bg-amberwarm hover:text-[#0F1E19] transition cursor-pointer"
+            >
+              <i data-lucide="grid-2x2" class="w-4 h-4"></i>
+              <span id="label-toggle-all-events">Xem tất cả</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Thanh Sơ đồ 6 bước (Click từng bước để phóng to chi tiết) -->
+        <div class="reveal-item grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5 mb-5" id="story-stepper">
+          <button type="button" class="story-node is-active glass-panel rounded-xl p-3 text-left" data-step="0" onclick="selectStoryEvent(0)">
+            <div class="text-[11px] font-bold tracking-widest text-amberwarm mb-1">BƯỚC 01</div>
+            <div class="text-xs sm:text-sm font-semibold text-pearl line-clamp-2">Ông Diểu vào rừng đi săn</div>
+          </button>
+          <button type="button" class="story-node glass-panel rounded-xl p-3 text-left" data-step="1" onclick="selectStoryEvent(1)">
+            <div class="text-[11px] font-bold tracking-widest text-amberwarm mb-1">BƯỚC 02</div>
+            <div class="text-xs sm:text-sm font-semibold text-pearl line-clamp-2">Ông Diểu bắn khỉ đực</div>
+          </button>
+          <button type="button" class="story-node glass-panel rounded-xl p-3 text-left" data-step="2" onclick="selectStoryEvent(2)">
+            <div class="text-[11px] font-bold tracking-widest text-amberwarm mb-1">BƯỚC 03</div>
+            <div class="text-xs sm:text-sm font-semibold text-pearl line-clamp-2">Biến cố của gia đình khỉ</div>
+          </button>
+          <button type="button" class="story-node glass-panel rounded-xl p-3 text-left" data-step="3" onclick="selectStoryEvent(3)">
+            <div class="text-[11px] font-bold tracking-widest text-amberwarm mb-1">BƯỚC 04</div>
+            <div class="text-xs sm:text-sm font-semibold text-pearl line-clamp-2">Gặp nạn trên vách đá</div>
+          </button>
+          <button type="button" class="story-node glass-panel rounded-xl p-3 text-left" data-step="4" onclick="selectStoryEvent(4)">
+            <div class="text-[11px] font-bold tracking-widest text-amberwarm mb-1">BƯỚC 05</div>
+            <div class="text-xs sm:text-sm font-semibold text-pearl line-clamp-2">Băng bó và quyết định thả khỉ</div>
+          </button>
+          <button type="button" class="story-node glass-panel rounded-xl p-3 text-left" data-step="5" onclick="selectStoryEvent(5)">
+            <div class="text-[11px] font-bold tracking-widest text-amberwarm mb-1">BƯỚC 06</div>
+            <div class="text-xs sm:text-sm font-semibold text-pearl line-clamp-2">Gặp hoa tử huyền</div>
+          </button>
+        </div>
+
+        <!-- Chế độ 1: Phóng to chi tiết sự kiện đang chọn -->
+        <div id="story-focus-view" class="reveal-item glass-panel-amber rounded-3xl p-5 sm:p-7 grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+          <div class="lg:col-span-5">
+            <div class="relative overflow-hidden rounded-2xl aspect-[16/10] bg-[#0b1713] border border-amberwarm/35">
+              <img
+                id="story-focus-img"
+                src="https://upload.wikimedia.org/wikipedia/commons/2/2e/Misty_Mountain_Forest_%286037443287%29.jpg"
+                data-backup="https://images.unsplash.com/photo-1500354960738-4c480ed785bc?auto=format&fit=crop&w=1200&q=80"
+                alt="Minh họa sự kiện truyện Muối của rừng"
+                class="w-full h-full object-cover transition duration-500"
+                onerror="window.resolveImageFallback(this, 'event-1')"
+              />
+              <div class="absolute top-3 left-3 px-3 py-1 rounded-full bg-[#0F1E19]/85 border border-amberwarm/50 text-xs font-bold text-amberwarm tracking-wider" id="story-focus-badge">
+                MẮT XÍCH 01 / 06
+              </div>
+            </div>
+          </div>
+
+          <div class="lg:col-span-7 flex flex-col justify-between">
+            <div>
+              <div class="text-xs uppercase tracking-widest text-amberwarm font-semibold mb-2" id="story-focus-phase">Khởi đầu hành trình</div>
+              <h3 class="font-literary text-3xl sm:text-4xl font-bold text-pearl mb-4" id="story-focus-title">
+                Ông Diểu vào rừng đi săn
+              </h3>
+              <p class="text-base sm:text-xl text-slate-100 leading-relaxed mb-6" id="story-focus-desc">
+                Vào mùa xuân, ông Diểu mang theo khẩu súng mới được con trai tặng, vào rừng với mục đích săn khỉ.
+              </p>
+            </div>
+
+            <div class="flex items-center justify-between pt-4 border-t border-white/10">
+              <button
+                type="button"
+                onclick="stepStoryEvent(-1)"
+                class="inline-flex items-center gap-2 px-4 py-2 rounded-xl glass-panel text-xs sm:text-sm font-medium text-pearl hover:border-amberwarm/60 transition cursor-pointer"
+              >
+                <i data-lucide="chevron-left" class="w-4 h-4 text-amberwarm"></i>
+                <span>Sự kiện trước</span>
+              </button>
+
+              <span class="text-xs text-slate-300 hidden sm:inline">Nhấp vào từng bước phía trên để chuyển sự kiện</span>
+
+              <button
+                type="button"
+                onclick="stepStoryEvent(1)"
+                class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-amberwarm/20 border border-amberwarm/50 text-xs sm:text-sm font-semibold text-amberwarm hover:bg-amberwarm hover:text-[#0F1E19] transition cursor-pointer"
+              >
+                <span>Sự kiện tiếp</span>
+                <i data-lucide="chevron-right" class="w-4 h-4"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Chế độ 2: Xem tất cả 6 mắt xích cùng lúc -->
+        <div id="story-all-view" class="hidden grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div class="glass-panel rounded-2xl p-4 hover:border-amberwarm/50 cursor-pointer transition" onclick="openStoryFromAll(0)">
+            <div class="text-xs font-bold text-amberwarm mb-1">01 • Ông Diểu vào rừng đi săn</div>
+            <p class="text-sm text-slate-100 leading-relaxed">Vào mùa xuân, ông Diểu mang theo khẩu súng mới được con trai tặng, vào rừng với mục đích săn khỉ.</p>
+          </div>
+          <div class="glass-panel rounded-2xl p-4 hover:border-amberwarm/50 cursor-pointer transition" onclick="openStoryFromAll(1)">
+            <div class="text-xs font-bold text-amberwarm mb-1">02 • Ông Diểu bắn khỉ đực</div>
+            <p class="text-sm text-slate-100 leading-relaxed">Phát hiện một gia đình khỉ, ông Diểu bắn trúng con khỉ đực.</p>
+          </div>
+          <div class="glass-panel rounded-2xl p-4 hover:border-amberwarm/50 cursor-pointer transition" onclick="openStoryFromAll(2)">
+            <div class="text-xs font-bold text-amberwarm mb-1">03 • Biến cố của gia đình khỉ</div>
+            <p class="text-sm text-slate-100 leading-relaxed">Khỉ mẹ liều mình quay lại cứu khỉ bố, còn khỉ con ôm súng của ông Diểu bỏ chạy rồi rơi xuống vực.</p>
+          </div>
+          <div class="glass-panel rounded-2xl p-4 hover:border-amberwarm/50 cursor-pointer transition" onclick="openStoryFromAll(3)">
+            <div class="text-xs font-bold text-amberwarm mb-1">04 • Gặp nạn trên vách đá</div>
+            <p class="text-sm text-slate-100 leading-relaxed">Ông Diểu trèo lên bắt khỉ đực nhưng bị đá lở rơi xuống Hõm Chết, mất sạch quần áo và đồ đạc.</p>
+          </div>
+          <div class="glass-panel rounded-2xl p-4 hover:border-amberwarm/50 cursor-pointer transition" onclick="openStoryFromAll(4)">
+            <div class="text-xs font-bold text-amberwarm mb-1">05 • Băng bó và quyết định thả khỉ</div>
+            <p class="text-sm text-slate-100 leading-relaxed">Vác khỉ đực về nhà và thấy khỉ mẹ lặng lẽ bám theo, ông Diểu động lòng trắc ẩn nên lấy chiếc quần đang mặc để băng bó vết thương rồi thả khỉ về rừng.</p>
+          </div>
+          <div class="glass-panel-amber rounded-2xl p-4 hover:border-amberwarm cursor-pointer transition" onclick="openStoryFromAll(5)">
+            <div class="text-xs font-bold text-amberwarm mb-1">06 • Gặp hoa tử huyền</div>
+            <p class="text-sm text-slate-100 leading-relaxed">Trên đường về trong làn mưa xuân, ông tình cờ gặp hoa tử huyền (muối của rừng) nở rộ báo hiệu điềm lành.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================
+         SLIDE 06: 5. NGÔI KỂ & ĐIỂM NHÌN
+    ========================================================== -->
+    <section class="slide" data-slide="5" data-title="5. Ngôi kể & Điểm nhìn">
+      <div class="slide-bg-wrap">
+        <img
+          class="slide-bg-img"
+          src="https://images.unsplash.com/photo-1738844697698-fd824d22d380?auto=format&fit=crop&w=1920&q=80"
+          data-backup="https://upload.wikimedia.org/wikipedia/commons/2/2e/Misty_Mountain_Forest_%286037443287%29.jpg"
+          alt="Rừng sương mù mờ ảo gợi điểm nhìn nghệ thuật"
+          onerror="window.resolveImageFallback(this, 'forest-mist')"
+        />
+        <div class="slide-mist-overlay"></div>
+      </div>
+
+      <div class="slide-inner flex flex-col justify-center min-h-screen">
+        <div class="mb-8">
+          <p class="section-eyebrow mb-2">Phần 05 • Nghệ Thuật Trần Thuật</p>
+          <h2 class="slide-heading">5. Ngôi kể <span class="text-amberwarm font-normal">&amp; Điểm nhìn</span></h2>
+        </div>
+
+        <!-- 3 khối kết nối logic: Ngôi kể + Điểm nhìn -> Tác dụng -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
+          <!-- Khối 1: Ngôi kể -->
+          <article class="reveal-item lg:col-span-5 glass-panel rounded-3xl p-6 sm:p-7 flex flex-col justify-between cursor-pointer" onclick="spotlightItem(this)">
+            <div>
+              <div class="flex items-center justify-between mb-4">
+                <span class="px-3 py-1 rounded-full bg-white/10 text-xs font-semibold tracking-wider uppercase text-slate-200">Yếu tố 01</span>
+                <div class="w-11 h-11 rounded-2xl bg-amberwarm/15 border border-amberwarm/35 flex items-center justify-center text-amberwarm">
+                  <i data-lucide="mic" class="w-5 h-5"></i>
+                </div>
+              </div>
+              <h3 class="font-literary text-3xl font-bold text-amberwarm mb-3">Ngôi kể</h3>
+              <p class="text-base sm:text-lg text-slate-100 leading-relaxed">
+                Ngôi thứ ba (người kể chuyện toàn tri / giấu mình, gọi tên nhân vật là "ông Diểu").
+              </p>
+            </div>
+            <div class="mt-5 pt-4 border-t border-white/10 text-xs text-slate-300">
+              Giữ khoảng cách trần thuật tỉnh táo, bao quát toàn bộ bức tranh tự nhiên và con người
+            </div>
+          </article>
+
+          <!-- Dấu cộng kết nối -->
+          <div class="reveal-item lg:col-span-2 flex items-center justify-center py-1">
+            <div class="w-12 h-12 rounded-full glass-panel-amber flex items-center justify-center text-amberwarm font-bold text-2xl shadow-lg">
+              +
+            </div>
+          </div>
+
+          <!-- Khối 2: Điểm nhìn -->
+          <article class="reveal-item lg:col-span-5 glass-panel rounded-3xl p-6 sm:p-7 flex flex-col justify-between cursor-pointer" onclick="spotlightItem(this)">
+            <div>
+              <div class="flex items-center justify-between mb-4">
+                <span class="px-3 py-1 rounded-full bg-white/10 text-xs font-semibold tracking-wider uppercase text-slate-200">Yếu tố 02</span>
+                <div class="w-11 h-11 rounded-2xl bg-amberwarm/15 border border-amberwarm/35 flex items-center justify-center text-amberwarm">
+                  <i data-lucide="eye" class="w-5 h-5"></i>
+                </div>
+              </div>
+              <h3 class="font-literary text-3xl font-bold text-amberwarm mb-3">Điểm nhìn</h3>
+              <p class="text-base sm:text-lg text-slate-100 leading-relaxed">
+                Nhân vật ông Diểu.
+              </p>
+            </div>
+            <div class="mt-5 pt-4 border-t border-white/10 text-xs text-slate-300">
+              Đi theo dòng cảm nhận, đối thoại nội tâm và sự thức tỉnh từng bước của nhân vật
+            </div>
+          </article>
+        </div>
+
+        <!-- Mũi tên dẫn tới Khối tổng hợp Tác dụng -->
+        <div class="reveal-item flex justify-center my-4">
+          <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amberwarm/15 border border-amberwarm/40 text-amberwarm text-xs font-semibold tracking-widest uppercase">
+            <i data-lucide="arrow-down" class="w-4 h-4"></i>
+            <span>Dẫn tới hiệu quả nghệ thuật</span>
+          </div>
+        </div>
+
+        <!-- Khối 3: Tác dụng nổi bật -->
+        <article class="reveal-item glass-panel-amber rounded-3xl p-6 sm:p-8 cursor-pointer" onclick="spotlightItem(this)">
+          <div class="flex flex-col md:flex-row md:items-center gap-6">
+            <div class="w-16 h-16 rounded-2xl bg-amberwarm text-[#0F1E19] flex items-center justify-center shrink-0 shadow-[0_10px_30px_rgba(226,184,107,0.35)]">
+              <i data-lucide="sparkles" class="w-8 h-8"></i>
+            </div>
+            <div class="flex-1">
+              <div class="text-xs font-bold uppercase tracking-[0.2em] text-amberwarm mb-1.5">Tổng hợp giá trị nghệ thuật</div>
+              <h3 class="font-literary text-3xl font-bold text-pearl mb-2">Tác dụng</h3>
+              <p class="text-base sm:text-xl text-pearl leading-relaxed">
+                Thể hiện được tính khách quan, tạo sự hấp dẫn cho câu chuyện, làm nổi bật tính cách nhân vật ông Diểu.
+              </p>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- =========================================================
+         SLIDE 07: 6. BỐ CỤC TÁC PHẨM (4 PHẦN)
+    ========================================================== -->
+    <section class="slide" data-slide="6" data-title="6. Bố cục tác phẩm (4 phần)">
+      <div class="slide-bg-wrap">
+        <img
+          class="slide-bg-img"
+          src="https://images.unsplash.com/photo-1500354960738-4c480ed785bc?auto=format&fit=crop&w=1920&q=80"
+          data-backup="https://upload.wikimedia.org/wikipedia/commons/2/2e/Misty_Mountain_Forest_%286037443287%29.jpg"
+          alt="Cấu trúc bốn chặng hành trình rừng xanh"
+          onerror="window.resolveImageFallback(this, 'forest-mist')"
+        />
+        <div class="slide-mist-overlay"></div>
+      </div>
+
+      <div class="slide-inner flex flex-col justify-center min-h-screen">
+        <div class="mb-7">
+          <p class="section-eyebrow mb-2">Phần 06 • Cấu Trúc Văn Bản</p>
+          <h2 class="slide-heading">6. Bố cục <span class="text-amberwarm font-normal">(4 phần)</span></h2>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5 lg:gap-6">
+          <!-- Part 01 -->
+          <article
+            class="reveal-item glass-panel rounded-3xl p-6 border-l-4 border-l-emerald-400 hover:border-emerald-300 cursor-pointer"
+            onclick="spotlightItem(this)"
+          >
+            <div class="flex items-center justify-between mb-3">
+              <span class="px-3 py-1 rounded-full bg-emerald-400/15 border border-emerald-400/40 text-emerald-300 text-xs font-bold tracking-widest uppercase">
+                Part 01 • Phần 1
+              </span>
+              <span class="font-literary text-2xl font-bold text-emerald-300/80">01</span>
+            </div>
+            <h3 class="text-lg sm:text-xl font-bold text-pearl mb-2">Mở đầu cuộc đi săn</h3>
+            <p class="text-sm sm:text-base text-slate-100 leading-relaxed">
+              Phần 1: Từ đầu đến <span class="italic text-emerald-200 font-medium">"...người ta vẫn gọi là Hõm Chết"</span> (Mở đầu cuộc đi săn)
+            </p>
+          </article>
+
+          <!-- Part 02 -->
+          <article
+            class="reveal-item glass-panel rounded-3xl p-6 border-l-4 border-l-rose-400 hover:border-rose-300 cursor-pointer"
+            onclick="spotlightItem(this)"
+          >
+            <div class="flex items-center justify-between mb-3">
+              <span class="px-3 py-1 rounded-full bg-rose-400/15 border border-rose-400/40 text-rose-300 text-xs font-bold tracking-widest uppercase">
+                Part 02 • Phần 2
+              </span>
+              <span class="font-literary text-2xl font-bold text-rose-300/80">02</span>
+            </div>
+            <h3 class="text-lg sm:text-xl font-bold text-pearl mb-2">Biến cố trong chuyến săn</h3>
+            <p class="text-sm sm:text-base text-slate-100 leading-relaxed">
+              Phần 2: Tiếp theo đến <span class="italic text-rose-200 font-medium">"...xuống tận đáy vực"</span> (Biến cố trong chuyến săn)
+            </p>
+          </article>
+
+          <!-- Part 03 -->
+          <article
+            class="reveal-item glass-panel rounded-3xl p-6 border-l-4 border-l-amberwarm hover:border-amberwarm cursor-pointer"
+            onclick="spotlightItem(this)"
+          >
+            <div class="flex items-center justify-between mb-3">
+              <span class="px-3 py-1 rounded-full bg-amberwarm/15 border border-amberwarm/45 text-amberwarm text-xs font-bold tracking-widest uppercase">
+                Part 03 • Phần 3
+              </span>
+              <span class="font-literary text-2xl font-bold text-amberwarm/85">03</span>
+            </div>
+            <h3 class="text-lg sm:text-xl font-bold text-pearl mb-2">Sự thức tỉnh lương tâm</h3>
+            <p class="text-sm sm:text-base text-slate-100 leading-relaxed">
+              Phần 3: Tiếp theo đến <span class="italic text-amberwarm font-medium">"...lầm lũi đi theo"</span> (Sự thức tỉnh lương tâm)
+            </p>
+          </article>
+
+          <!-- Part 04 -->
+          <article
+            class="reveal-item glass-panel-amber rounded-3xl p-6 border-l-4 border-l-pearl hover:border-pearl cursor-pointer"
+            onclick="spotlightItem(this)"
+          >
+            <div class="flex items-center justify-between mb-3">
+              <span class="px-3 py-1 rounded-full bg-pearl/15 border border-pearl/40 text-pearl text-xs font-bold tracking-widest uppercase">
+                Part 04 • Phần 4
+              </span>
+              <span class="font-literary text-2xl font-bold text-pearl/85">04</span>
+            </div>
+            <h3 class="text-lg sm:text-xl font-bold text-pearl mb-2">Hành trình trở về</h3>
+            <p class="text-sm sm:text-base text-slate-100 leading-relaxed">
+              Phần 4: Phần còn lại (Hành trình trở về)
+            </p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================
+         SLIDE 08: TỔNG KẾT & CẢM ƠN (Q&A)
+    ========================================================== -->
+    <section class="slide" data-slide="7" data-title="Tổng kết & Cảm ơn (Q&A)">
+      <div class="slide-bg-wrap">
+        <img
+          class="slide-bg-img"
+          src="https://upload.wikimedia.org/wikipedia/commons/4/4d/Beautiful_tiny_white_wild_flower.jpg"
+          data-backup="https://images.unsplash.com/photo-1593841251751-1d61d8ed59e5?auto=format&fit=crop&w=1920&q=80"
+          alt="Hoa tử huyền nở rộ giữa mưa xuân"
+          onerror="window.resolveImageFallback(this, 'flower-tu-huyen')"
+        />
+        <div class="slide-mist-overlay"></div>
+      </div>
+
+      <div class="slide-inner flex flex-col items-center justify-center text-center min-h-screen">
+        <div class="reveal-item inline-flex items-center gap-2 px-4 py-1.5 rounded-full glass-panel-amber text-xs uppercase tracking-[0.22em] text-amberwarm font-semibold mb-6">
+          <i data-lucide="quote" class="w-3.5 h-3.5"></i>
+          <span>Dư Âm Tác Phẩm • Thảo Luận &amp; Hỏi Đáp (Q&amp;A)</span>
+        </div>
+
+        <blockquote class="reveal-item glass-panel-amber rounded-3xl p-7 sm:p-10 max-w-4xl mb-7 relative">
+          <p class="font-literary italic text-2xl sm:text-4xl text-pearl leading-snug mb-4">
+            “Khi thiên nhiên mở lòng trước sự thức tỉnh của lòng nhân ái, hoa tử huyền kết muối giữa làn mưa xuân — báo hiệu sự giao hòa thiêng liêng giữa con người với muôn loài.”
+          </p>
+          <footer class="text-sm sm:text-base text-amberwarm font-medium">
+            — Kết tinh giá trị nhân bản trong truyện ngắn <span class="italic">Muối của rừng</span> (Nguyễn Huy Thiệp)
+          </footer>
+        </blockquote>
+
+        <div class="reveal-item mb-7">
+          <h2 class="font-literary text-3xl sm:text-5xl font-bold text-pearl mb-2">
+            Trân trọng cảm ơn Thầy/Cô và các bạn đã lắng nghe!
+          </h2>
+          <p class="text-sm sm:text-base text-slate-200">
+            Nhóm thuyết trình sẵn sàng đón nhận câu hỏi &amp; góp ý. Có thể mở <span class="text-amberwarm font-semibold">Mục lục nhanh (phím M)</span> hoặc chọn nhanh bên dưới để trao đổi chi tiết.
+          </p>
+        </div>
+
+        <!-- Nút truy cập nhanh phục vụ phần Q&A -->
+        <div class="reveal-item flex flex-wrap items-center justify-center gap-2.5 mb-8 max-w-3xl">
+          <button type="button" onclick="goToSlide(1)" class="dock-btn">1. Tác giả</button>
+          <button type="button" onclick="goToSlide(2)" class="dock-btn">2. Thể loại &amp; Xuất xứ</button>
+          <button type="button" onclick="goToSlide(3)" class="dock-btn">3. Ý nghĩa nhan đề</button>
+          <button type="button" onclick="goToSlide(4)" class="dock-btn">4. Tóm tắt 6 sự kiện</button>
+          <button type="button" onclick="goToSlide(5)" class="dock-btn">5. Ngôi kể &amp; Điểm nhìn</button>
+          <button type="button" onclick="goToSlide(6)" class="dock-btn">6. Bố cục 4 phần</button>
+        </div>
+
+        <div class="reveal-item flex flex-wrap items-center justify-center gap-4">
+          <button
+            type="button"
+            onclick="goToSlide(0)"
+            class="inline-flex items-center gap-2.5 px-7 py-3.5 rounded-full bg-amberwarm text-[#0F1E19] font-semibold text-sm sm:text-base shadow-[0_12px_32px_rgba(226,184,107,0.35)] hover:bg-[#ecc983] hover:scale-[1.03] transition cursor-pointer"
+          >
+            <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+            <span>Quay lại từ đầu</span>
+          </button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- =========================================================
+       SMART BOTTOM DOCK (Tự động mờ khi không di chuột)
+  ========================================================== -->
+  <nav id="smart-dock" class="glass-panel rounded-2xl px-3 py-2 flex items-center gap-2 sm:gap-3 shadow-2xl" aria-label="Điều hướng trình chiếu">
+    <button type="button" onclick="prevSlide()" class="dock-btn" title="Trang trước (←)">
+      <i data-lucide="chevron-left" class="w-4 h-4"></i>
+    </button>
+
+    <div class="flex flex-col min-w-[115px] sm:min-w-[165px] px-1">
+      <div class="flex items-center justify-between text-xs mb-1">
+        <span id="dock-counter" class="font-bold text-amberwarm tracking-wider">01 / 08</span>
+        <span id="dock-title" class="text-slate-200 truncate max-w-[95px] sm:max-w-[130px] ml-2">Bìa mở đầu</span>
+      </div>
+      <div class="w-full h-1.5 rounded-full bg-white/10 overflow-hidden">
+        <div id="dock-progress" class="h-full bg-gradient-to-r from-amberwarm to-pearl rounded-full transition-all duration-500" style="width: 12.5%;"></div>
+      </div>
+    </div>
+
+    <button type="button" onclick="nextSlide()" class="dock-btn" title="Trang tiếp (→ / Space)">
+      <i data-lucide="chevron-right" class="w-4 h-4"></i>
+    </button>
+
+    <div class="h-5 w-px bg-white/15 mx-0.5"></div>
+
+    <button type="button" id="dock-btn-next-item" onclick="revealNextItem()" class="dock-btn" title="Mở từng ý tiếp theo (Phím N)">
+      <i data-lucide="list-plus" class="w-4 h-4 text-amberwarm"></i>
+      <span class="dock-label-hide-sm">Từng ý (N)</span>
+    </button>
+
+    <button type="button" id="dock-btn-overview" onclick="toggleOverview()" class="dock-btn" title="Mục lục nhanh (Phím M)">
+      <i data-lucide="layout-grid" class="w-4 h-4"></i>
+      <span class="dock-label-hide-sm">M</span>
+    </button>
+
+    <button type="button" id="dock-btn-particles" onclick="toggleParticles()" class="dock-btn is-active" title="Bật/tắt mưa xuân & cánh hoa (Phím P)">
+      <i data-lucide="sparkles" class="w-4 h-4"></i>
+      <span class="dock-label-hide-sm">P</span>
+    </button>
+
+    <button type="button" id="dock-btn-laser" onclick="toggleLaser()" class="dock-btn" title="Con trỏ Laser đỏ ảo (Phím L)">
+      <i data-lucide="crosshair" class="w-4 h-4"></i>
+      <span class="dock-label-hide-sm">L</span>
+    </button>
+
+    <button type="button" id="dock-btn-fullscreen" onclick="toggleFullscreen()" class="dock-btn" title="Toàn màn hình (Phím F)">
+      <i data-lucide="maximize-2" class="w-4 h-4"></i>
+      <span class="dock-label-hide-sm">F</span>
+    </button>
+  </nav>
+
+  <!-- =========================================================
+       SLIDE OVERVIEW GRID MODAL (Phím M)
+  ========================================================== -->
+  <div id="overview-modal" role="dialog" aria-modal="true" aria-label="Mục lục nhanh 8 slide">
+    <div class="w-full max-w-6xl mx-auto p-6 sm:p-10 my-auto">
+      <div class="flex items-center justify-between mb-6 pb-4 border-b border-white/15">
+        <div>
+          <p class="section-eyebrow mb-1">Điều Hướng Nhanh Khi Thuyết Trình &amp; Hỏi Đáp</p>
+          <h2 class="font-literary text-3xl sm:text-4xl font-bold text-pearl">Mục lục Triển lãm Văn học — Muối Của Rừng</h2>
+        </div>
+        <button
+          type="button"
+          onclick="toggleOverview(false)"
+          class="dock-btn px-4 py-2 text-sm"
+          title="Đóng mục lục (Esc hoặc M)"
+        >
+          <i data-lucide="x" class="w-4 h-4"></i>
+          <span>Đóng (Esc)</span>
+        </button>
+      </div>
+
+      <div id="overview-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"></div>
+
+      <div class="mt-6 pt-4 border-t border-white/10 flex flex-wrap gap-4 justify-center text-xs text-slate-300">
+        <span><kbd class="px-2 py-0.5 rounded bg-white/10 text-amberwarm">← / → / Space</kbd> Chuyển slide</span>
+        <span><kbd class="px-2 py-0.5 rounded bg-white/10 text-amberwarm">N</kbd> Hiện từng ý tuần tự</span>
+        <span><kbd class="px-2 py-0.5 rounded bg-white/10 text-amberwarm">M</kbd> Mở mục lục</span>
+        <span><kbd class="px-2 py-0.5 rounded bg-white/10 text-amberwarm">F</kbd> Toàn màn hình</span>
+        <span><kbd class="px-2 py-0.5 rounded bg-white/10 text-amberwarm">L</kbd> Con trỏ Laser đỏ</span>
+        <span><kbd class="px-2 py-0.5 rounded bg-white/10 text-amberwarm">P</kbd> Mưa xuân &amp; hoa tử huyền</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================
+       APPLICATION LOGIC & FALLBACK ENGINE
+  ========================================================== -->
+  <script>
+    // 1. CHỐT CHẶN CHỐNG VỠ ẢNH (SVG DATA URI ĐỘ PHÂN GIẢI CAO)
+    function generateArtSvgDataUri(themeKey) {
+      const themes = {
+        'author': {
+          title: 'NGUYỄN HUY THIỆP (1950 – 2021)',
+          subtitle: 'Chân dung nghệ thuật • Bút mực &amp; Gốm Bát Tràng',
+          accent: '#E2B86B',
+          body: `
+            <circle cx="600" cy="340" r="190" fill="none" stroke="#E2B86B" stroke-opacity="0.35" stroke-width="2" stroke-dasharray="8 8"/>
+            <ellipse cx="600" cy="540" rx="210" ry="70" fill="#F8FAFC" fill-opacity="0.12" stroke="#E2B86B" stroke-opacity="0.55" stroke-width="3"/>
+            <path d="M510 310 C510 230 690 230 690 310 C690 390 650 435 600 435 C550 435 510 390 510 310 Z" fill="#1F3830" stroke="#E2B86B" stroke-width="2.5"/>
+            <path d="M445 640 C460 510 530 470 600 470 C670 470 740 510 755 640 Z" fill="#162923" stroke="#E2B86B" stroke-opacity="0.7" stroke-width="2.5"/>
+            <path d="M685 415 L775 290" stroke="#E2B86B" stroke-width="6" stroke-linecap="round"/>
+            <circle cx="685" cy="415" r="8" fill="#F8FAFC"/>
+          `
+        },
+        'forest-mist': {
+          title: 'NÚI RỪNG TÂY BẮC MÙA XUÂN',
+          subtitle: 'Bối cảnh truyện ngắn Muối của rừng',
+          accent: '#E2B86B',
+          body: `
+            <circle cx="920" cy="180" r="88" fill="#E2B86B" fill-opacity="0.22"/>
+            <path d="M0 540 L240 320 L480 480 L760 270 L1020 450 L1200 350 L1200 800 L0 800 Z" fill="#162923"/>
+            <path d="M0 620 L310 430 L590 560 L860 390 L1200 540 L1200 800 L0 800 Z" fill="#12241E"/>
+            <rect x="0" y="510" width="1200" height="75" fill="#F8FAFC" fill-opacity="0.08"/>
+            <rect x="0" y="610" width="1200" height="90" fill="#F8FAFC" fill-opacity="0.06"/>
+          `
+        },
+        'flower-tu-huyen': {
+          title: 'HOA TỬ HUYỀN — MUỐI CỦA RỪNG',
+          subtitle: '30 năm nở một lần • Điềm lành thanh bình &amp; nhân ái',
+          accent: '#F8FAFC',
+          body: `
+            <path d="M120 680 Q460 540 820 640 T1200 610 L1200 800 L0 800 L0 660 Z" fill="#162923"/>
+            <g transform="translate(600,365)">
+              <circle cx="0" cy="-78" r="46" fill="#F8FAFC" fill-opacity="0.9"/>
+              <circle cx="74" cy="-24" r="46" fill="#F8FAFC" fill-opacity="0.88"/>
+              <circle cx="46" cy="63" r="46" fill="#F8FAFC" fill-opacity="0.86"/>
+              <circle cx="-46" cy="63" r="46" fill="#F8FAFC" fill-opacity="0.88"/>
+              <circle cx="-74" cy="-24" r="46" fill="#F8FAFC" fill-opacity="0.9"/>
+              <circle cx="0" cy="0" r="26" fill="#E2B86B"/>
+            </g>
+            <circle cx="380" cy="480" r="14" fill="#F8FAFC" fill-opacity="0.75"/>
+            <circle cx="830" cy="450" r="18" fill="#F8FAFC" fill-opacity="0.75"/>
+            <circle cx="460" cy="240" r="8" fill="#E2B86B" fill-opacity="0.8"/>
+          `
+        },
+        'event-1': {
+          title: 'SỰ KIỆN 01 • ÔNG DIỂU VÀO RỪNG ĐI SĂN',
+          subtitle: 'Khẩu súng mới và bước chân vào rừng xuân',
+          accent: '#E2B86B',
+          body: `
+            <path d="M0 590 Q380 480 780 570 T1200 540 L1200 800 L0 800 Z" fill="#162923"/>
+            <path d="M180 620 L210 220 M310 640 L330 180 M920 630 L950 200 M1040 650 L1065 240" stroke="#244238" stroke-width="18"/>
+            <circle cx="610" cy="360" r="120" fill="#E2B86B" fill-opacity="0.16"/>
+          `
+        },
+        'event-2': {
+          title: 'SỰ KIỆN 02 • ÔNG DIỂU BẮN KHỈ ĐỰC',
+          subtitle: 'Biến cố đầu tiên giữa gia đình loài khỉ',
+          accent: '#E2B86B',
+          body: `
+            <path d="M100 520 Q450 380 860 440 T1160 390" fill="none" stroke="#2A4D41" stroke-width="26" stroke-linecap="round"/>
+            <circle cx="520" cy="370" r="52" fill="#E2B86B" fill-opacity="0.25"/>
+            <circle cx="520" cy="370" r="24" fill="#E2B86B"/>
+            <circle cx="630" cy="400" r="18" fill="#F8FAFC" fill-opacity="0.75"/>
+            <circle cx="710" cy="415" r="14" fill="#F8FAFC" fill-opacity="0.55"/>
+          `
+        },
+        'event-3': {
+          title: 'SỰ KIỆN 03 • BIẾN CỐ CỦA GIA ĐÌNH KHỈ',
+          subtitle: 'Khỉ mẹ quay lại cứu khỉ bố • Khỉ con rơi xuống vực',
+          accent: '#E2B86B',
+          body: `
+            <path d="M0 340 L480 430 L560 760 L0 760 Z" fill="#162923"/>
+            <path d="M760 410 L1200 310 L1200 760 L660 760 Z" fill="#162923"/>
+            <path d="M520 430 Q620 320 740 410" fill="none" stroke="#E2B86B" stroke-width="4" stroke-dasharray="10 10"/>
+          `
+        },
+        'event-4': {
+          title: 'SỰ KIỆN 04 • GẶP NẠN TRÊN VÁCH ĐÁ',
+          subtitle: 'Đá lở xuống Hõm Chết • Mất sạch đồ đạc',
+          accent: '#E2B86B',
+          body: `
+            <path d="M0 180 L420 260 L540 800 L0 800 Z" fill="#193029"/>
+            <path d="M780 220 L1200 150 L1200 800 L680 800 Z" fill="#142620"/>
+            <polygon points="560,340 610,360 595,410 545,390" fill="#E2B86B" fill-opacity="0.55"/>
+            <polygon points="640,460 675,480 655,520 620,495" fill="#F8FAFC" fill-opacity="0.45"/>
+          `
+        },
+        'event-5': {
+          title: 'SỰ KIỆN 05 • BĂNG BÓ VÀ QUYẾT ĐỊNH THẢ KHỈ',
+          subtitle: 'Sự thức tỉnh lòng trắc ẩn và nhân tính',
+          accent: '#E2B86B',
+          body: `
+            <circle cx="600" cy="370" r="190" fill="#E2B86B" fill-opacity="0.16"/>
+            <circle cx="600" cy="370" r="110" fill="#E2B86B" fill-opacity="0.22"/>
+            <path d="M490 380 C530 320 670 320 710 380 C670 440 530 440 490 380 Z" fill="none" stroke="#F8FAFC" stroke-width="4"/>
+            <circle cx="600" cy="380" r="24" fill="#F8FAFC"/>
+          `
+        },
+        'event-6': {
+          title: 'SỰ KIỆN 06 • GẶP HOA TỬ HUYỀN',
+          subtitle: 'Mưa xuân dịu dàng và điềm lành muối của rừng',
+          accent: '#F8FAFC',
+          body: `
+            <line x1="250" y1="120" x2="210" y2="280" stroke="#F8FAFC" stroke-opacity="0.35" stroke-width="2"/>
+            <line x1="480" y1="90" x2="440" y2="260" stroke="#F8FAFC" stroke-opacity="0.35" stroke-width="2"/>
+            <line x1="880" y1="110" x2="840" y2="290" stroke="#F8FAFC" stroke-opacity="0.35" stroke-width="2"/>
+            <circle cx="600" cy="390" r="140" fill="#E2B86B" fill-opacity="0.18"/>
+            <circle cx="600" cy="340" r="32" fill="#F8FAFC"/>
+            <circle cx="645" cy="380" r="32" fill="#F8FAFC"/>
+            <circle cx="555" cy="380" r="32" fill="#F8FAFC"/>
+            <circle cx="628" cy="428" r="32" fill="#F8FAFC"/>
+            <circle cx="572" cy="428" r="32" fill="#F8FAFC"/>
+            <circle cx="600" cy="385" r="20" fill="#E2B86B"/>
+          `
+        }
+      };
+
+      const t = themes[themeKey] || themes['forest-mist'];
+      const svg = `
+        <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" viewBox="0 0 1200 800">
+          <defs>
+            <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#0F1E19"/>
+              <stop offset="55%" stop-color="#162923"/>
+              <stop offset="100%" stop-color="#0A1512"/>
+            </linearGradient>
+          </defs>
+          <rect width="1200" height="800" fill="url(#bg)"/>
+          ${t.body}
+          <rect x="40" y="40" width="1120" height="720" rx="28" fill="none" stroke="#E2B86B" stroke-opacity="0.28" stroke-width="2"/>
+          <text x="600" y="690" text-anchor="middle" fill="#F8FAFC" font-family="Georgia, serif" font-size="30" font-weight="700" letter-spacing="2">${t.title}</text>
+          <text x="600" y="730" text-anchor="middle" fill="${t.accent}" font-family="sans-serif" font-size="18" opacity="0.9">${t.subtitle}</text>
+        </svg>
+      `.trim();
+
+      return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+    }
+
+    window.resolveImageFallback = function (imgEl, themeKey) {
+      if (!imgEl || imgEl.dataset.fallbackStage === 'svg') return;
+      if (imgEl.dataset.backup && imgEl.dataset.fallbackStage !== 'backup') {
+        imgEl.dataset.fallbackStage = 'backup';
+        imgEl.src = imgEl.dataset.backup;
+        return;
+      }
+      imgEl.dataset.fallbackStage = 'svg';
+      imgEl.onerror = null;
+      imgEl.src = generateArtSvgDataUri(themeKey || 'forest-mist');
+    };
+
+    // 2. DỮ LIỆU 6 MẮT XÍCH CỐT TRUYỆN (SLIDE 05)
+    const storyEvents = [
+      {
+        phase: 'Mắt xích 01 • Khởi đầu cuộc săn',
+        title: 'Ông Diểu vào rừng đi săn',
+        desc: 'Vào mùa xuân, ông Diểu mang theo khẩu súng mới được con trai tặng, vào rừng với mục đích săn khỉ.',
+        img: 'https://upload.wikimedia.org/wikipedia/commons/2/2e/Misty_Mountain_Forest_%286037443287%29.jpg',
+        backup: 'https://images.unsplash.com/photo-1500354960738-4c480ed785bc?auto=format&fit=crop&w=1200&q=80',
+        theme: 'event-1'
+      },
+      {
+        phase: 'Mắt xích 02 • Phát súng định mệnh',
+        title: 'Ông Diểu bắn khỉ đực',
+        desc: 'Phát hiện một gia đình khỉ, ông Diểu bắn trúng con khỉ đực.',
+        img: 'https://upload.wikimedia.org/wikipedia/commons/a/a6/Macaca_fascicularis_in_Monkey_Forest_Ubud.jpg',
+        backup: 'https://images.unsplash.com/photo-1632764261011-24763c3aa384?auto=format&fit=crop&w=1200&q=80',
+        theme: 'event-2'
+      },
+      {
+        phase: 'Mắt xích 03 • Nghịch cảnh & tình mẫu tử',
+        title: 'Biến cố của gia đình khỉ',
+        desc: 'Khỉ mẹ liều mình quay lại cứu khỉ bố, còn khỉ con ôm súng của ông Diểu bỏ chạy rồi rơi xuống vực.',
+        img: 'https://images.unsplash.com/photo-1632764261011-24763c3aa384?auto=format&fit=crop&w=1200&q=80',
+        backup: 'https://upload.wikimedia.org/wikipedia/commons/a/a6/Macaca_fascicularis_in_Monkey_Forest_Ubud.jpg',
+        theme: 'event-3'
+      },
+      {
+        phase: 'Mắt xích 04 • Thử thách sinh tử',
+        title: 'Gặp nạn trên vách đá',
+        desc: 'Ông Diểu trèo lên bắt khỉ đực nhưng bị đá lở rơi xuống Hõm Chết, mất sạch quần áo và đồ đạc.',
+        img: 'https://images.unsplash.com/photo-1738844697698-fd824d22d380?auto=format&fit=crop&w=1200&q=80',
+        backup: 'https://upload.wikimedia.org/wikipedia/commons/2/2e/Misty_Mountain_Forest_%286037443287%29.jpg',
+        theme: 'event-4'
+      },
+      {
+        phase: 'Mắt xích 05 • Thức tỉnh lương tâm',
+        title: 'Băng bó và quyết định thả khỉ',
+        desc: 'Vác khỉ đực về nhà và thấy khỉ mẹ lặng lẽ bám theo, ông Diểu động lòng trắc ẩn nên lấy chiếc quần đang mặc để băng bó vết thương rồi thả khỉ về rừng.',
+        img: 'https://images.unsplash.com/photo-1500354960738-4c480ed785bc?auto=format&fit=crop&w=1200&q=80',
+        backup: 'https://upload.wikimedia.org/wikipedia/commons/2/2e/Misty_Mountain_Forest_%286037443287%29.jpg',
+        theme: 'event-5'
+      },
+      {
+        phase: 'Mắt xích 06 • Phần thưởng của thiên nhiên',
+        title: 'Gặp hoa tử huyền',
+        desc: 'Trên đường về trong làn mưa xuân, ông tình cờ gặp hoa tử huyền (muối của rừng) nở rộ báo hiệu điềm lành.',
+        img: 'https://upload.wikimedia.org/wikipedia/commons/4/4d/Beautiful_tiny_white_wild_flower.jpg',
+        backup: 'https://images.unsplash.com/photo-1593841251751-1d61d8ed59e5?auto=format&fit=crop&w=1200&q=80',
+        theme: 'event-6'
+      }
+    ];
+
+    // 3. QUẢN LÝ TRẠNG THÁI SLIDE & HIỆU ỨNG GSAP
+    const slides = Array.from(document.querySelectorAll('.slide'));
+    let currentSlideIndex = 0;
+    let currentStoryStep = 0;
+    let isAllEventsView = false;
+    let progressiveMode = false;
+    let revealedCount = 0;
+    let isOverviewOpen = false;
+    let particlesEnabled = true;
+    let laserEnabled = false;
+    let lastWheelAt = 0;
+    let dockIdleTimer = null;
+
+    function pad2(n) {
+      return String(n).padStart(2, '0');
+    }
+
+    function updateDockUI() {
+      const total = slides.length;
+      const activeSlide = slides[currentSlideIndex];
+      document.getElementById('dock-counter').textContent = `${pad2(currentSlideIndex + 1)} / ${pad2(total)}`;
+      document.getElementById('dock-title').textContent = activeSlide.dataset.title || '';
+      document.getElementById('dock-progress').style.width = `${((currentSlideIndex + 1) / total) * 100}%`;
+    }
+
+    function applyProgressiveState(slideEl) {
+      const items = Array.from(slideEl.querySelectorAll('.reveal-item'));
+      items.forEach((el) => el.classList.remove('is-spotlight'));
+
+      if (!progressiveMode) {
+        items.forEach((el) => el.classList.remove('is-hidden-step'));
+        revealedCount = items.length;
+        return;
+      }
+
+      revealedCount = Math.min(1, items.length);
+      items.forEach((el, idx) => {
+        if (idx < revealedCount) {
+          el.classList.remove('is-hidden-step');
+        } else {
+          el.classList.add('is-hidden-step');
+        }
+      });
+    }
+
+    function animateSlideEnter(slideEl) {
+      const bgImg = slideEl.querySelector('.slide-bg-img');
+      if (bgImg && window.gsap) {
+        gsap.killTweensOf(bgImg);
+        gsap.fromTo(bgImg, { scale: 1.12 }, { scale: 1.0, duration: 9, ease: 'power1.out' });
+      }
+
+      const items = Array.from(slideEl.querySelectorAll('.reveal-item'));
+      applyProgressiveState(slideEl);
+
+      if (window.gsap && items.length) {
+        gsap.killTweensOf(items);
+        gsap.fromTo(
+          items,
+          { y: 22, opacity: 0 },
+          {
+            y: 0,
+            opacity: (idx) => (progressiveMode && idx >= revealedCount ? 0.12 : 1),
+            duration: 0.65,
+            stagger: 0.09,
+            ease: 'power3.out',
+            clearProps: 'transform'
+          }
+        );
+      }
+    }
+
+    function goToSlide(targetIndex) {
+      const clamped = Math.max(0, Math.min(slides.length - 1, targetIndex));
+      if (clamped === currentSlideIndex && slides[clamped].classList.contains('is-active')) return;
+
+      const prevSlideEl = slides[currentSlideIndex];
+      const nextSlideEl = slides[clamped];
+
+      prevSlideEl.classList.remove('is-active');
+      prevSlideEl.style.display = 'none';
+      prevSlideEl.style.opacity = '0';
+
+      currentSlideIndex = clamped;
+      nextSlideEl.style.display = 'flex';
+      nextSlideEl.scrollTop = 0;
+      nextSlideEl.classList.add('is-active');
+
+      if (window.gsap) {
+        gsap.fromTo(nextSlideEl, { opacity: 0 }, { opacity: 1, duration: 0.48, ease: 'power2.out' });
+      } else {
+        nextSlideEl.style.opacity = '1';
+      }
+
+      animateSlideEnter(nextSlideEl);
+      updateDockUI();
+      renderOverviewGrid();
+      pingDock();
+    }
+
+    function nextSlide() {
+      if (currentSlideIndex < slides.length - 1) {
+        goToSlide(currentSlideIndex + 1);
+      }
+    }
+
+    function prevSlide() {
+      if (currentSlideIndex > 0) {
+        goToSlide(currentSlideIndex - 1);
+      }
+    }
+
+    // Progressive Disclosure từng ý (Phím N)
+    function toggleProgressiveMode() {
+      progressiveMode = !progressiveMode;
+      const labelEl = document.getElementById('step-mode-label');
+      labelEl.textContent = progressiveMode ? 'Chế độ từng ý (Bật)' : 'Hiện toàn bộ ý';
+      applyProgressiveState(slides[currentSlideIndex]);
+      pingDock();
+    }
+
+    function revealNextItem() {
+      const activeSlide = slides[currentSlideIndex];
+      const items = Array.from(activeSlide.querySelectorAll('.reveal-item'));
+      if (!progressiveMode) {
+        progressiveMode = true;
+        document.getElementById('step-mode-label').textContent = 'Chế độ từng ý (Bật)';
+        revealedCount = 1;
+        items.forEach((el, idx) => {
+          el.classList.toggle('is-hidden-step', idx >= 1);
+        });
+        pingDock();
+        return;
+      }
+
+      if (revealedCount < items.length) {
+        const target = items[revealedCount];
+        target.classList.remove('is-hidden-step');
+        if (window.gsap) {
+          gsap.fromTo(target, { y: 14, opacity: 0.15 }, { y: 0, opacity: 1, duration: 0.45, ease: 'power2.out', clearProps: 'transform' });
+        }
+        revealedCount += 1;
+      } else {
+        nextSlide();
+      }
+      pingDock();
+    }
+
+    function spotlightItem(cardEl) {
+      if (cardEl.classList.contains('is-hidden-step')) {
+        cardEl.classList.remove('is-hidden-step');
+        if (window.gsap) {
+          gsap.fromTo(cardEl, { opacity: 0.2 }, { opacity: 1, duration: 0.35 });
+        }
+      }
+      const siblings = cardEl.closest('.slide').querySelectorAll('.reveal-item');
+      const wasSpotlit = cardEl.classList.contains('is-spotlight');
+      siblings.forEach((el) => el.classList.remove('is-spotlight'));
+      if (!wasSpotlit) {
+        cardEl.classList.add('is-spotlight');
+      }
+    }
+
+    function selectMeaningCard(cardEl) {
+      const cards = cardEl.parentElement.querySelectorAll('.meaning-card');
+      cards.forEach((c) => c.classList.remove('is-selected'));
+      cardEl.classList.add('is-selected');
+      spotlightItem(cardEl);
+    }
+
+    // 4. TƯƠNG TÁC SƠ ĐỒ 6 SỰ KIỆN (SLIDE 05)
+    function selectStoryEvent(stepIndex) {
+      currentStoryStep = (stepIndex + storyEvents.length) % storyEvents.length;
+      const ev = storyEvents[currentStoryStep];
+
+      document.querySelectorAll('#story-stepper .story-node').forEach((btn, idx) => {
+        btn.classList.toggle('is-active', idx === currentStoryStep);
+      });
+
+      document.getElementById('story-focus-badge').textContent = `MẮT XÍCH ${pad2(currentStoryStep + 1)} / 06`;
+      document.getElementById('story-focus-phase').textContent = ev.phase;
+      document.getElementById('story-focus-title').textContent = ev.title;
+      document.getElementById('story-focus-desc').textContent = ev.desc;
+
+      const focusImg = document.getElementById('story-focus-img');
+      focusImg.dataset.fallbackStage = '';
+      focusImg.dataset.backup = ev.backup;
+      focusImg.onerror = function () { window.resolveImageFallback(this, ev.theme); };
+      focusImg.src = ev.img;
+
+      const bgImg = document.getElementById('story-slide-bg');
+      bgImg.dataset.fallbackStage = '';
+      bgImg.dataset.backup = ev.backup;
+      bgImg.onerror = function () { window.resolveImageFallback(this, ev.theme); };
+      bgImg.src = ev.img;
+
+      if (window.gsap && !isAllEventsView) {
+        gsap.fromTo('#story-focus-view', { y: 10, opacity: 0.72 }, { y: 0, opacity: 1, duration: 0.35, ease: 'power2.out' });
+      }
+    }
+
+    function stepStoryEvent(delta) {
+      selectStoryEvent(currentStoryStep + delta);
+    }
+
+    function toggleAllEventsView() {
+      isAllEventsView = !isAllEventsView;
+      document.getElementById('story-focus-view').classList.toggle('hidden', isAllEventsView);
+      document.getElementById('story-all-view').classList.toggle('hidden', !isAllEventsView);
+      document.getElementById('label-toggle-all-events').textContent = isAllEventsView ? 'Phóng to từng bước' : 'Xem tất cả';
+    }
+
+    function openStoryFromAll(stepIndex) {
+      isAllEventsView = false;
+      document.getElementById('story-focus-view').classList.remove('hidden');
+      document.getElementById('story-all-view').classList.add('hidden');
+      document.getElementById('label-toggle-all-events').textContent = 'Xem tất cả';
+      selectStoryEvent(stepIndex);
+    }
+
+    // 5. MỤC LỤC NHANH (OVERVIEW GRID - PHÍM M)
+    function renderOverviewGrid() {
+      const grid = document.getElementById('overview-grid');
+      if (!grid) return;
+      grid.innerHTML = slides
+        .map((slideEl, idx) => {
+          const isCurrent = idx === currentSlideIndex;
+          const title = slideEl.dataset.title || `Slide ${idx + 1}`;
+          return `
+            <button
+              type="button"
+              onclick="jumpFromOverview(${idx})"
+              class="text-left rounded-2xl p-4 transition cursor-pointer ${
+                isCurrent
+                  ? 'glass-panel-amber ring-2 ring-amberwarm'
+                  : 'glass-panel hover:border-amberwarm/50 hover:-translate-y-1'
+              }"
+            >
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-xs font-bold tracking-widest ${isCurrent ? 'text-amberwarm' : 'text-slate-300'}">
+                  SLIDE ${pad2(idx + 1)}
+                </span>
+                ${isCurrent ? '<span class="text-[10px] px-2 py-0.5 rounded-full bg-amberwarm text-[#0F1E19] font-bold">ĐANG XEM</span>' : ''}
+              </div>
+              <div class="font-literary text-xl font-bold text-pearl leading-snug">${title}</div>
+            </button>
+          `;
+        })
+        .join('');
+    }
+
+    function toggleOverview(forceState) {
+      const modal = document.getElementById('overview-modal');
+      isOverviewOpen = typeof forceState === 'boolean' ? forceState : !isOverviewOpen;
+      if (isOverviewOpen) {
+        renderOverviewGrid();
+        modal.classList.add('is-open');
+        if (window.gsap) {
+          gsap.fromTo(modal, { opacity: 0 }, { opacity: 1, duration: 0.25 });
+        } else {
+          modal.style.opacity = '1';
+        }
+      } else {
+        modal.classList.remove('is-open');
+        modal.style.opacity = '0';
+      }
+    }
+
+    function jumpFromOverview(idx) {
+      toggleOverview(false);
+      goToSlide(idx);
+    }
+
+    // 6. TOÀN MÀN HÌNH (PHÍM F) & CON TRỎ LASER ĐỎ ẢO (PHÍM L)
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen?.().catch(() => {});
+      } else {
+        document.exitFullscreen?.().catch(() => {});
+      }
+      pingDock();
+    }
+
+    document.addEventListener('fullscreenchange', () => {
+      const btn = document.getElementById('dock-btn-fullscreen');
+      btn?.classList.toggle('is-active', Boolean(document.fullscreenElement));
+    });
+
+    const laserDot = document.getElementById('laser-dot');
+    let lastTrailAt = 0;
+
+    function toggleLaser() {
+      laserEnabled = !laserEnabled;
+      document.body.classList.toggle('laser-mode', laserEnabled);
+      laserDot.style.display = laserEnabled ? 'block' : 'none';
+      document.getElementById('dock-btn-laser')?.classList.toggle('is-active', laserEnabled);
+      pingDock();
+    }
+
+    document.addEventListener('mousemove', (e) => {
+      pingDock();
+      if (!laserEnabled) return;
+      laserDot.style.left = `${e.clientX}px`;
+      laserDot.style.top = `${e.clientY}px`;
+
+      const now = performance.now();
+      if (now - lastTrailAt > 24) {
+        lastTrailAt = now;
+        const trail = document.createElement('div');
+        trail.className = 'laser-trail';
+        trail.style.left = `${e.clientX}px`;
+        trail.style.top = `${e.clientY}px`;
+        document.body.appendChild(trail);
+        requestAnimationFrame(() => {
+          trail.style.opacity = '0';
+          trail.style.transform = 'translate(-50%, -50%) scale(0.35)';
+        });
+        setTimeout(() => trail.remove(), 290);
+      }
+    });
+
+    // 7. AMBIENT CANVAS PARTICLE (MƯA XUÂN & CÁNH HOA TỬ HUYỀN - PHÍM P)
+    const canvas = document.getElementById('ambient-canvas');
+    const ctx = canvas.getContext('2d');
+    const drizzleParticles = [];
+    const petalParticles = [];
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+
+    function initParticles() {
+      drizzleParticles.length = 0;
+      petalParticles.length = 0;
+      for (let i = 0; i < 65; i += 1) {
+        drizzleParticles.push({
+          x: Math.random() * window.innerWidth,
+          y: Math.random() * window.innerHeight,
+          len: 10 + Math.random() * 14,
+          speedY: 1.6 + Math.random() * 1.8,
+          speedX: -0.35 - Math.random() * 0.3,
+          alpha: 0.08 + Math.random() * 0.14
+        });
+      }
+      for (let i = 0; i < 24; i += 1) {
+        petalParticles.push({
+          x: Math.random() * window.innerWidth,
+          y: Math.random() * window.innerHeight,
+          radius: 1.8 + Math.random() * 2.8,
+          speedY: 0.32 + Math.random() * 0.45,
+          swayPhase: Math.random() * Math.PI * 2,
+          swaySpeed: 0.012 + Math.random() * 0.016,
+          alpha: 0.28 + Math.random() * 0.42
+        });
+      }
+    }
+
+    function drawAmbientFrame() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      if (particlesEnabled) {
+        // Lớp 1: Mưa xuân lất phất
+        ctx.lineWidth = 1;
+        for (let i = 0; i < drizzleParticles.length; i += 1) {
+          const d = drizzleParticles[i];
+          d.x += d.speedX;
+          d.y += d.speedY;
+          if (d.y > canvas.height + 20) {
+            d.y = -20;
+            d.x = Math.random() * canvas.width;
+          }
+          if (d.x < -20) d.x = canvas.width + 10;
+
+          ctx.strokeStyle = `rgba(248, 250, 252, ${d.alpha})`;
+          ctx.beginPath();
+          ctx.moveTo(d.x, d.y);
+          ctx.lineTo(d.x + d.speedX * 4, d.y + d.len);
+          ctx.stroke();
+        }
+
+        // Lớp 2: Cánh hoa tử huyền trắng nhỏ bay nhẹ
+        for (let i = 0; i < petalParticles.length; i += 1) {
+          const p = petalParticles[i];
+          p.swayPhase += p.swaySpeed;
+          p.x += Math.sin(p.swayPhase) * 0.55;
+          p.y -= p.speedY * 0.55;
+          if (p.y < -20) {
+            p.y = canvas.height + 20;
+            p.x = Math.random() * canvas.width;
+          }
+
+          ctx.save();
+          ctx.translate(p.x, p.y);
+          ctx.rotate(p.swayPhase * 0.8);
+          ctx.fillStyle = `rgba(248, 250, 252, ${p.alpha})`;
+          ctx.shadowBlur = 10;
+          ctx.shadowColor = 'rgba(226, 184, 107, 0.45)';
+          ctx.beginPath();
+          ctx.ellipse(0, 0, p.radius * 1.4, p.radius * 0.78, 0, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.restore();
+        }
+      }
+      requestAnimationFrame(drawAmbientFrame);
+    }
+
+    function toggleParticles() {
+      particlesEnabled = !particlesEnabled;
+      canvas.style.opacity = particlesEnabled ? '1' : '0';
+      document.getElementById('dock-btn-particles')?.classList.toggle('is-active', particlesEnabled);
+      pingDock();
+    }
+
+    // 8. SMART DOCK AUTO-FADE
+    function pingDock() {
+      const dock = document.getElementById('smart-dock');
+      if (!dock) return;
+      dock.classList.remove('is-idle');
+      clearTimeout(dockIdleTimer);
+      dockIdleTimer = setTimeout(() => {
+        if (!isOverviewOpen) dock.classList.add('is-idle');
+      }, 3500);
+    }
+
+    // 9. PHÍM TẮT, CUỘN CHUỘT & VUỐT CẢM ỨNG
+    document.addEventListener('keydown', (e) => {
+      const activeTag = document.activeElement;
+      if (activeTag && (activeTag.isContentEditable || activeTag.tagName === 'INPUT' || activeTag.tagName === 'TEXTAREA')) {
+        if (e.key === 'Escape') activeTag.blur();
+        return;
+      }
+
+      if (e.key === 'Escape' && isOverviewOpen) {
+        toggleOverview(false);
+        return;
+      }
+
+      const key = e.key.toLowerCase();
+      if (key === 'm') {
+        e.preventDefault();
+        toggleOverview();
+        return;
+      }
+      if (key === 'f') {
+        e.preventDefault();
+        toggleFullscreen();
+        return;
+      }
+      if (key === 'l') {
+        e.preventDefault();
+        toggleLaser();
+        return;
+      }
+      if (key === 'p') {
+        e.preventDefault();
+        toggleParticles();
+        return;
+      }
+      if (key === 'n') {
+        e.preventDefault();
+        revealNextItem();
+        return;
+      }
+
+      if (isOverviewOpen) return;
+
+      if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ') {
+        e.preventDefault();
+        nextSlide();
+      } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+        e.preventDefault();
+        prevSlide();
+      } else if (e.key >= '1' && e.key <= '8') {
+        goToSlide(Number(e.key) - 1);
+      }
+    });
+
+    window.addEventListener(
+      'wheel',
+      (e) => {
+        if (isOverviewOpen || Math.abs(e.deltaY) < 28) return;
+        const activeSlide = slides[currentSlideIndex];
+        const canScrollVertically = activeSlide.scrollHeight > activeSlide.clientHeight + 8;
+        if (canScrollVertically) {
+          const atTop = activeSlide.scrollTop <= 2;
+          const atBottom = activeSlide.scrollTop + activeSlide.clientHeight >= activeSlide.scrollHeight - 4;
+          if ((e.deltaY < 0 && !atTop) || (e.deltaY > 0 && !atBottom)) {
+            return;
+          }
+        }
+
+        const now = Date.now();
+        if (now - lastWheelAt < 650) return;
+        lastWheelAt = now;
+
+        if (e.deltaY > 0) nextSlide();
+        else prevSlide();
+      },
+      { passive: true }
+    );
+
+    let touchStartX = 0;
+    window.addEventListener('touchstart', (e) => {
+      touchStartX = e.changedTouches[0].clientX;
+    }, { passive: true });
+
+    window.addEventListener('touchend', (e) => {
+      if (isOverviewOpen) return;
+      const dx = e.changedTouches[0].clientX - touchStartX;
+      if (Math.abs(dx) > 65) {
+        if (dx < 0) nextSlide();
+        else prevSlide();
+      }
+    }, { passive: true });
+
+    // 10. KHỞI TẠO HỆ THỐNG KHI TẢI XONG
+    window.addEventListener('resize', resizeCanvas);
+    window.addEventListener('DOMContentLoaded', () => {
+      if (window.lucide) {
+        window.lucide.createIcons();
+      }
+      resizeCanvas();
+      initParticles();
+      drawAmbientFrame();
+
+      slides[0].style.display = 'flex';
+      slides[0].style.opacity = '1';
+      animateSlideEnter(slides[0]);
+      updateDockUI();
+      renderOverviewGrid();
+      pingDock();
+    });
+  </script>
+</body>
+</html>
